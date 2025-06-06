@@ -1,0 +1,39 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL; --unsigned, enteros.
+
+entity swled is
+  Port ( 
+        data_in : in std_logic_vector(3 downto 0);
+        data_out : out std_logic_vector(7 downto 0)
+      
+  );
+end swled;
+
+architecture Behavioral of swled is
+signal data_aux: std_logic_vector (7 downto 0);
+begin
+    process(data_in)
+    begin
+        case data_in is
+            when "0000" => data_aux <= "11000000"; --0
+            when "0001" => data_aux <= "11111001"; --1
+            when "0010" => data_aux <= "10100100"; --2
+            when "0011" => data_aux <= "10110000"; --3
+            when "0100" => data_aux <= "10011001"; --4
+            when "0101" => data_aux <= "10010010"; --5
+            when "0110" => data_aux <= "10000010"; --6
+            when "0111" => data_aux <= "10111000"; --7
+            when "1000" => data_aux <= "10000000"; --8
+            when "1001" => data_aux <= "10010000"; --9
+            when "1010" => data_aux <= "11111000"; --T
+            when "1011" => data_aux <= "11000110"; --C
+            when "1100" => data_aux <= "10010010"; --S
+            when "1101" => data_aux <= "11001000"; --M
+            when "1110" => data_aux <= "10001001"; --X
+            when others => data_aux <= "11111111";
+        end case;
+      end process;
+      
+      data_out <= data_aux;
+end Behavioral;
