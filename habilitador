@@ -1,0 +1,25 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity hab is
+  Port ( 
+    clk_hab : in std_logic;
+    rst_hab : in std_logic;
+    data_hab : out std_logic_vector (3 downto 0)
+  );
+end hab;
+
+architecture Beh of hab is
+signal aux :std_logic_vector(3 downto 0);
+begin
+    process(clk_hab, rst_hab)
+    begin
+        if rst_hab = '1' then
+            aux <= "0001";
+        elsif rising_edge (clk_hab) then
+            aux <= aux(2 downto 0) & aux(3);
+        end if;
+    end process;
+data_hab <=aux;
+end Beh;
