@@ -1,0 +1,34 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.ALL;
+
+entity div_frec1Hz is
+    Port ( 
+        rst_div2 : in std_logic; 
+        clk_div2 : in std_logic; 
+        out_div2 : out std_logic
+    );
+end div_frec1Hz;
+
+architecture Behavioral of div_frec1Hz is
+
+signal contador2: unsigned (31 downto 0);
+signal out_div_aux2 : std_logic;  
+
+begin
+    process(rst_div2, clk_div2)
+        begin
+            if rst_div2 = '1' then
+                out_div_aux2 <= '0';
+                contador2 <= (others => '0');
+            elsif rising_edge (clk_div2) then
+                contador2 <= contador2 + 1; 
+                if contador2 = 50000000 then
+                    out_div_aux2 <= not out_div_aux2;
+                    contador2 <= (others => '0');
+                end if;
+             end if;
+     end process;
+     
+     out_div2 <= out_div_aux2;
+end Behavioral;
