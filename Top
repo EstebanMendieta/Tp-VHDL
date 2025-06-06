@@ -1,0 +1,98 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+
+entity top is 
+  Port ( 
+    sw_top : in std_logic_vector(1 downto 0);
+    rst_top :in std_logic;
+    clk_top : in std_logic;
+    data_out_top : out std_logic_vector(7 downto 0);
+    enable_top : out std_logic_vector(3 downto 0)
+  );
+end top;
+
+architecture bh of top is
+    
+    component contador
+     Port ( 
+        clk_100Hz : in std_logic;
+        clk_1Hz : in std_logic;
+        sw : in std_logic_vector(1 downto 0);
+        rst : in std_logic;
+        data_out : out std_logic_vector(3 downto 0);
+        enable : out std_logic_vector(3 downto 0)
+    );
+    end component;
+    
+    component div_frec
+    Port ( 
+        rst_div : in std_logic; 
+        clk_div : in std_logic; 
+        out_div : out std_logic
+    );
+    end component;
+    
+    component div_frec1Hz
+    Port ( 
+        rst_div2 : in std_logic; 
+        clk_div2 : in std_logic; 
+        out_div2 : out std_logic
+    );
+    end component;
+    
+    component swled
+    Port ( 
+        data_in : in std_logic_vector(3 downto 0);
+        data_out : out std_logic_vector(7 downto 0)
+      
+    );
+    end component;
+    
+    signal sw_signal : std_logic_vector(1 downto 0);
+    signal rst_signal : std_logic;
+    signal clk_signal : std_logic;
+    signal clk_100Hz_signal : std_logic;
+    signal clk_1Hz_signal : std_logic;
+    signal data_signal : std_logic_vector (3 downto 0);
+    signal data_out_signal : std_logic_vector(7 downto 0);
+    signal enable_signal : std_logic_vector(3 downto 0);
+    
+begin
+
+    sw_signal <= sw_top;
+    rst_signal <= rst_top;
+    clk_signal <= clk_top;
+    data_out_top <= data_out_signal;
+    enable_top <= enable_signal;
+    
+
+    b_1 : div_frec
+    port map(
+        clk_div => clk_signal,
+        rst_div => rst_signal,
+        out_div => clk_100Hz_signal
+    );
+    b_2 : div_frec1Hz
+    port map(
+        clk_div2 => clk_signal,
+        rst_div2 => rst_signal,
+        out_div2 => clk_1Hz_signal
+    );
+    b_3 : contador
+    port map(
+        sw => sw_signal,
+        rst => rst_signal,
+        clk_100Hz => clk_100Hz_signal,
+        clk_1HZ => clk_1HZ_signal,
+        data_out => data_signal,
+        enable => enable_signal
+    );
+    b_4 : swled
+    port map(
+        data_in => data_signal,
+        data_out => data_out_signal
+    );
+    
+
+end bh;
