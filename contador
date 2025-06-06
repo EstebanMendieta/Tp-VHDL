@@ -1,0 +1,112 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity contador is   
+    Port ( 
+        clk_100Hz : in std_logic;
+        clk_1Hz : in std_logic;
+        sw : in std_logic_vector(1 downto 0);
+        rst : in std_logic;
+        data_out : out std_logic_vector(3 downto 0);
+        enable : out std_logic_vector(3 downto 0)
+    );
+end contador;
+
+architecture Behavioral of contador is  
+    signal cont1 : integer range 0 to 16;
+--   signal cont1 : unsigned (3 downto 0);
+   signal cont2 : integer range 0 to 16;
+   signal cont3 : unsigned (3 downto 0);
+   signal hab1 : std_logic_vector(3 downto 0);
+   signal hab2 : std_logic_vector(3 downto 0);
+   signal indice :std_logic_vector (1 downto 0);
+   
+   begin
+   process(clk_100Hz, rst)
+   begin 
+        if rst = '1' then
+            cont1 <= 10;
+            hab1 <= "0000";
+        elsif rising_edge(clk_100Hz) then
+            if cont1 = 10 then
+                cont1 <= 11;
+                hab1 <= "0100";
+            elsif cont1 = 11 then
+                cont1 <= 12;
+                hab1 <= "0010";
+            elsif cont1 = 12 then
+                cont1 <= 13;
+                hab1 <= "0001";
+            elsif cont1 = 13 then
+                cont1 <= 10;
+                hab1 <= "1000";
+            end if;
+         end if;
+   end process;
+   
+
+   process(clk_100Hz, rst)
+   begin 
+        if rst = '1' then
+            cont2 <= 2;
+            hab2 <= "0000";
+            indice <= "00";
+        elsif rising_edge(clk_100Hz) then
+            if indice = "00" then
+                cont2 <= 0;
+                hab2 <= "0100";
+                indice <= "01";
+            elsif indice = "01" then
+                cont2 <= 2;
+                hab2 <= "0010";
+                indice <= "10";
+            elsif indice = "10" then
+                cont2 <= 5;
+                hab2 <= "0001";
+                indice <= "11";
+            elsif indice <= "11" then
+                cont2 <= 2;
+                hab2 <= "1000";
+                indice <= "00";
+            end if;
+         end if;
+   end process;
+   
+   process (clk_1Hz, rst)
+   begin
+    if rst ='1' then
+        cont3 <= (others => '0');
+        
+    else
+        if rising_edge(clk_1Hz) then
+            if cont3 =  "1001" then
+                cont3 <= (others => '0');
+            else
+                cont3 <= cont3 +1;
+            end if;
+        end if;
+   end if;
+   end process;
+   
+    process(sw,cont3,cont2,cont1,hab1,hab2)
+    begin
+        case sw is
+            when "00" => 
+                data_out <= "1110"; 
+                enable <= "0000";
+            when "01" => 
+                data_out <= std_logic_vector(cont3); 
+                enable <= "1110"; 
+            when "10" => 
+                data_out <= std_logic_vector(TO_UNSIGNED(cont1,4)); 
+                enable <= not hab1;
+            when "11" => 
+                data_out <= std_logic_vector(TO_UNSIGNED(cont2, 4)); 
+                enable <= not hab2;
+            when others => null;
+        end case;
+    end process;
+    
+    
+end Behavioral;
